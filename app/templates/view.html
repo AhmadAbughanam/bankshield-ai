@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Viewing {{ filename }} - BankShield AI</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+        padding: 2rem 0;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-align: center;
+      }
+
+      .logo {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        border-radius: 16px;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+      }
+
+      .header h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+      }
+
+      .filename {
+        color: #6b7280;
+        font-size: 1rem;
+        font-weight: 500;
+        background: rgba(79, 70, 229, 0.1);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        display: inline-block;
+      }
+
+      .insight-panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .insight-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .insight-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.5rem;
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+      }
+
+      .insight-header h5 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+      }
+
+      .insight-content {
+        background: linear-gradient(
+          135deg,
+          rgba(16, 185, 129, 0.1),
+          rgba(5, 150, 105, 0.05)
+        );
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #374151;
+      }
+
+      .data-panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        border-radius: 16px;
+        background: white;
+        border: 1px solid #e5e7eb;
+      }
+
+      .table-container table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table-container th {
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 2px solid #e5e7eb;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .table-container td {
+        padding: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+        color: #4b5563;
+        font-size: 0.9rem;
+      }
+
+      .table-container tr:hover {
+        background: rgba(79, 70, 229, 0.02);
+      }
+
+      .table-container tr:last-child td {
+        border-bottom: none;
+      }
+
+      .actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 2rem 0;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+        text-decoration: none;
+        color: white;
+      }
+
+      .btn-icon {
+        width: 18px;
+        height: 18px;
+        margin-right: 0.5rem;
+      }
+
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        color: #6b7280;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 1rem;
+        }
+
+        .header,
+        .insight-panel,
+        .data-panel {
+          padding: 1.5rem;
+          border-radius: 16px;
+        }
+
+        .actions {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .table-container {
+          font-size: 0.8rem;
+        }
+
+        .table-container th,
+        .table-container td {
+          padding: 0.75rem 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">📊</div>
+        <h2>Transaction Analysis Results</h2>
+        <div class="filename">{{ filename }}</div>
+      </div>
+
+      <div class="insight-panel">
+        <div class="insight-header">
+          <div class="insight-icon">🔍</div>
+          <h5>AI Risk Assessment Summary</h5>
+        </div>
+        <div class="insight-content">{{ insight }}</div>
+      </div>
+
+      <div class="data-panel">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="totalTransactions">-</div>
+            <div class="stat-label">Total Transactions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="flaggedTransactions">-</div>
+            <div class="stat-label">Flagged for Review</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="riskScore">-</div>
+            <div class="stat-label">Risk Score</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="totalAmount">-</div>
+            <div class="stat-label">Total Amount</div>
+          </div>
+        </div>
+
+        <div class="table-container">{{ table|safe }}</div>
+      </div>
+
+      <div class="actions">
+        <a href="{{ url_for('main.upload') }}" class="btn btn-primary">
+          <svg class="btn-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          Upload Another File
+        </a>
+      </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Calculate and display statistics
+        calculateStats();
+
+        // Add loading states to buttons
+        const buttons = document.querySelectorAll(".btn");
+        buttons.forEach((button) => {
+          button.addEventListener("click", function () {
+            if (!this.href.includes("#")) {
+              document.getElementById("loadingOverlay").style.display = "flex";
+            }
+          });
+        });
+
+        // Add animation to stat cards
+        const statCards = document.querySelectorAll(".stat-card");
+        statCards.forEach((card, index) => {
+          card.style.opacity = "0";
+          card.style.transform = "translateY(20px)";
+
+          setTimeout(() => {
+            card.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+            card.style.opacity = "1";
+            card.style.transform = "translateY(0)";
+          }, index * 100 + 300);
+        });
+
+        // Add hover effect to table rows
+        const tableRows = document.querySelectorAll(".table-container tr");
+        tableRows.forEach((row) => {
+          row.addEventListener("mouseenter", function () {
+            this.style.transform = "scale(1.005)";
+          });
+
+          row.addEventListener("mouseleave", function () {
+            this.style.transform = "scale(1)";
+          });
+        });
+      });
+
+      function calculateStats() {
+        const table = document.querySelector(".table-container table");
+        if (!table) return;
+
+        const rows = table.querySelectorAll("tbody tr");
+        let totalTransactions = rows.length;
+        let flaggedCount = 0;
+        let totalAmount = 0;
+        let riskScore = 0;
+
+        rows.forEach((row) => {
+          const cells = row.querySelectorAll("td");
+
+          // Look for amount column (usually contains currency symbols or decimal numbers)
+          cells.forEach((cell) => {
+            const text = cell.textContent.trim();
+
+            // Check if this looks like a monetary amount
+            if (text.match(/[\$£€¥]|^\d+\.?\d*$/)) {
+              const amount = parseFloat(text.replace(/[^\d.-]/g, ""));
+              if (!isNaN(amount)) {
+                totalAmount += Math.abs(amount);
+              }
+            }
+
+            // Check for risk indicators (red background, "HIGH", "FLAGGED", etc.)
+            if (
+              cell.style.backgroundColor === "red" ||
+              text.toLowerCase().includes("high") ||
+              text.toLowerCase().includes("flagged") ||
+              text.toLowerCase().includes("suspicious")
+            ) {
+              flaggedCount++;
+            }
+          });
+        });
+
+        // Calculate risk score as percentage of flagged transactions
+        riskScore =
+          totalTransactions > 0
+            ? Math.round((flaggedCount / totalTransactions) * 100)
+            : 0;
+
+        // Update the display
+        document.getElementById("totalTransactions").textContent =
+          totalTransactions.toLocaleString();
+        document.getElementById("flaggedTransactions").textContent =
+          flaggedCount.toLocaleString();
+        document.getElementById("riskScore").textContent = riskScore + "%";
+        document.getElementById("totalAmount").textContent =
+          totalAmount > 0
+            ? "$" +
+              totalAmount.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+              })
+            : "N/A";
+
+        // Color code the risk score
+        const riskElement = document.getElementById("riskScore");
+        if (riskScore > 20) {
+          riskElement.style.color = "#dc2626"; // Red
+        } else if (riskScore > 10) {
+          riskElement.style.color = "#f59e0b"; // Yellow
+        } else {
+          riskElement.style.color = "#10b981"; // Green
+        }
+      }
+    </script>
+  </body>
+</html>

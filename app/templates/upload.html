@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Transaction CSV - BankShield AI</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        padding: 2rem;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 3rem;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        max-width: 600px;
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .logo {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        border-radius: 16px;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+      }
+
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        color: #6b7280;
+        font-size: 1rem;
+      }
+
+      .upload-section {
+        margin-bottom: 2rem;
+      }
+
+      .upload-area {
+        border: 2px dashed #d1d5db;
+        border-radius: 16px;
+        padding: 3rem 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: rgba(249, 250, 251, 0.8);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .upload-area.dragover {
+        border-color: #4f46e5;
+        background: rgba(79, 70, 229, 0.05);
+        transform: scale(1.02);
+      }
+
+      .upload-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+      }
+
+      .upload-text {
+        margin-bottom: 1rem;
+      }
+
+      .upload-text h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+      }
+
+      .upload-text p {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      .file-input-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-top: 1.5rem;
+      }
+
+      .file-input {
+        opacity: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+
+      .file-input-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+      }
+
+      .file-input-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+      }
+
+      .file-info {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(34, 197, 94, 0.1);
+        border-radius: 12px;
+        color: #059669;
+        display: none;
+      }
+
+      .submit-button {
+        width: 100%;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .submit-button.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .submit-button:hover.active {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        color: #6b7280;
+        text-decoration: none;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .back-link:hover {
+        text-decoration: none;
+        color: #374151;
+        border-color: #d1d5db;
+        background: rgba(249, 250, 251, 0.5);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: #e5e7eb;
+        border-radius: 2px;
+        margin-top: 1rem;
+        overflow: hidden;
+        display: none;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 2rem;
+          margin: 1rem;
+        }
+
+        .upload-area {
+          padding: 2rem 1rem;
+        }
+
+        .upload-icon {
+          width: 60px;
+          height: 60px;
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">📊</div>
+        <h2>Upload Transaction CSV</h2>
+        <p class="subtitle">Secure transaction analysis and fraud detection</p>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" id="uploadForm">
+        <div class="upload-section">
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">⬆️</div>
+            <div class="upload-text">
+              <h3>Drop your CSV file here</h3>
+              <p>or click to browse and select from your device</p>
+            </div>
+            <div class="file-input-wrapper">
+              <input
+                type="file"
+                name="file"
+                accept=".csv"
+                required
+                class="file-input"
+                id="fileInput"
+              />
+              <button type="button" class="file-input-button">
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                  style="margin-right: 0.5rem"
+                >
+                  <path
+                    d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"
+                  />
+                  <path
+                    d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"
+                  />
+                </svg>
+                Choose File
+              </button>
+            </div>
+            <div class="file-info" id="fileInfo"></div>
+            <div class="progress-bar" id="progressBar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-button" id="submitBtn">
+          Analyze Transactions
+        </button>
+      </form>
+
+      <a href="{{ url_for('main.home') }}" class="back-link">
+        <svg
+          width="16"
+          height="16"
+          fill="currentColor"
+          viewBox="0 0 16 16"
+          style="margin-right: 0.5rem"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
+          />
+        </svg>
+        Back to Home
+      </a>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const uploadArea = document.getElementById("uploadArea");
+        const fileInput = document.getElementById("fileInput");
+        const fileInfo = document.getElementById("fileInfo");
+        const submitBtn = document.getElementById("submitBtn");
+        const progressBar = document.getElementById("progressBar");
+        const progressFill = document.getElementById("progressFill");
+        const form = document.getElementById("uploadForm");
+
+        // Drag and drop functionality
+        uploadArea.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          uploadArea.classList.add("dragover");
+        });
+
+        uploadArea.addEventListener("dragleave", function (e) {
+          e.preventDefault();
+          uploadArea.classList.remove("dragover");
+        });
+
+        uploadArea.addEventListener("drop", function (e) {
+          e.preventDefault();
+          uploadArea.classList.remove("dragover");
+
+          const files = e.dataTransfer.files;
+          if (files.length > 0 && files[0].type === "text/csv") {
+            fileInput.files = files;
+            handleFileSelect(files[0]);
+          }
+        });
+
+        // File input change
+        fileInput.addEventListener("change", function (e) {
+          if (e.target.files.length > 0) {
+            handleFileSelect(e.target.files[0]);
+          }
+        });
+
+        function handleFileSelect(file) {
+          const fileSize = (file.size / 1024 / 1024).toFixed(2);
+          fileInfo.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 0.5rem;">
+                            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+                        </svg>
+                        <strong>${file.name}</strong> (${fileSize} MB)
+                    </div>
+                `;
+          fileInfo.style.display = "block";
+          submitBtn.classList.add("active");
+
+          // Simulate file validation
+          setTimeout(() => {
+            fileInfo.style.background = "rgba(34, 197, 94, 0.1)";
+            fileInfo.style.color = "#059669";
+          }, 500);
+        }
+
+        // Form submission with progress
+        form.addEventListener("submit", function (e) {
+          if (!fileInput.files.length) {
+            e.preventDefault();
+            return;
+          }
+
+          progressBar.style.display = "block";
+          submitBtn.textContent = "Analyzing...";
+          submitBtn.style.pointerEvents = "none";
+
+          // Simulate upload progress
+          let progress = 0;
+          const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 90) progress = 90;
+            progressFill.style.width = progress + "%";
+          }, 200);
+
+          // Let the form submit naturally, clear interval on page unload
+          window.addEventListener("beforeunload", () => {
+            clearInterval(interval);
+          });
+        });
+
+        // Click to upload area
+        uploadArea.addEventListener("click", function () {
+          fileInput.click();
+        });
+      });
+    </script>
+  </body>
+</html>
